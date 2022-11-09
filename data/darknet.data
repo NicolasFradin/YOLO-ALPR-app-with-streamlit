@@ -1,0 +1,5 @@
+classes = 1
+train = /content/drive/MyDrive/FORMATION/DEEP_LEARNING/ALPR_Yolo_v7/colab-alpr-yolov7/darknet/my_data/train.txt
+valid = /content/drive/MyDrive/FORMATION/DEEP_LEARNING/ALPR_Yolo_v7/colab-alpr-yolov7/darknet/my_data/test.txt
+names = /content/drive/MyDrive/FORMATION/DEEP_LEARNING/ALPR_Yolo_v7/colab-alpr-yolov7/darknet/my_data/classes.names
+backup = /content/drive/MyDrive/FORMATION/DEEP_LEARNING/ALPR_Yolo_v7/colab-alpr-yolov7/darknet/my_data/weights/
