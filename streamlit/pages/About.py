@@ -1,48 +1,98 @@
 import streamlit as st
+from config.config import random_image
+import cv2
 
 st.sidebar.markdown("# About ❄️")
 
-st.set_page_config(
-    page_title="Ex-stream-ly Cool App",
-    page_icon="🧊",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'Report a bug': "https://www.extremelycoolapp.com/bug",
-        'About': "# This is a header. This is an *extremely* cool app!"
-    }
-)
 
 def main():
-    new_title = '<p style="font-size: 42px;">Welcome to my Object Detection App!</p>'
+    new_title = '<p style="font-size: 42px;">Welcome to the Licence Plate Detection App!</p>'
     read_me_0 = st.markdown(new_title, unsafe_allow_html=True)
 
-    read_me = st.markdown("""
-    This project was built using Streamlit and OpenCV 
-    to demonstrate YOLO Object detection in both videos(pre-recorded)
-    and images.
+    read_me_1 = st.markdown("""
     
+    This project was built using Streamlit and OpenCV to demonstrate YOLO Object detection on images.
     
-    This YOLO object Detection project can detect 80 objects(i.e classes)
-    in either a video or image. The full list of the classes can be found 
-    [here](https://github.com/KaranJagtiani/YOLO-Coco-Dataset-Custom-Classes-Extractor/blob/main/classes.txt)"""
+
+    The goal is to create a POC to demonstrate the business interest to stop homemade licence plate deletions in a car-sharing marketplace as Ouicar.
+    The results with content-checking and automatic blurring are more professional and reassure guests. 
+
+
+    This YOLO Licence Plate Detection project can detect if the image has a car and then detects the licence plate. 
+    
+
+    Some examples frequently found on www.ouicar.fr: 
+
+
+    """
     )
-    st.sidebar.title("Select Activity")
-    choice  = st.sidebar.selectbox("MODE",("About","Object Detection(Image)","Object Detection(Video)"))
-    #["Show Instruction","Landmark identification","Show the #source code", "About"]
-     
+
+
+    cols_img = st.columns(3)
+    for index in range(len(cols_img)):
+        img1 = cv2.imread(random_image(folder='homemade'))   
+        img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB) #Apply RGB default colors
+        cols_img[index].image(img1, width=int(800/len(cols_img)))
+
+
+
+    st.sidebar.write("Made with love by @NicolasFradin")
+    st.sidebar.write("Check my Github page here")
+
+
+    read_me_2 = st.markdown("""
+
+
+        This is some features included in this app:
+        
+
+        - Add Multiple photos 
+        - Filter detection if it is a car or not 
+        - Detect the Licence Plate with poltting box and confidence intervals
+        - Apply pre-Blur on Plate Box
+        - Detect Lines and better blur 
+
+
+        A lot of improvements might be applied to raise the accuracy and results of this application:
+
+
+        - Build a better labeled training & test set
+        - Test multiple computer vision algorithm (ResNet50, Yolov7...)
+        
+
+        Other interesting features might be developed in the same way:
+
+
+        - Car segmentation to avoid over or under-zoomed images
+        - Dectect Car (Image) rotation 
+        - Detect commercial car images with white background
+        - Detect photoshoped Text on images
+        - Detect face & body 
+        - Detect Emojis or unusual plate deletion
+        - Remove it by replacing by fake blurred plate
+        - OCR on the plate for legal licence plate checking 
+        - Check image quality
+
+        Examples also frequetly found:
+
+    """
+    )
+
+    cols_img = st.columns(3)
+    for index in range(len(cols_img)):
+        img1 = cv2.imread(random_image(folder='other_features'))   
+        img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB) #Apply RGB default colors
+        cols_img[index].image(img1, width=int(800/len(cols_img)))
+
+
+    read_me_3 = st.markdown("""
+
+
+        All these pre and post image uploads filters might generate stored database features about the quality of the listing. 
+        And then be very usefull in the Search Rank and Risk Score algorithms.
+
+    """
+    )
 
 if __name__ == '__main__':
 		main()	
-
-
-#st.write(" Steps : ")
-
-# - Add Multiple photos 
-# - Detect if it is a car or not 
-# - (OPTIONAL) Detect Smiley or unusual plate and remove it by replacing by fake plate
-# - Detect the Licence Plate with poltting box and confidence intervals
-# - (OPTIONAL) OCR on plate for legal checking 
-# - Apply pre-Blur on Plate Box
-# - Detect Lines and better blur 

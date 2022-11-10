@@ -21,10 +21,19 @@ warnings.filterwarnings('ignore')
 from config.config import init_config, random_image
 
 st.sidebar.markdown("# Licence Plate ❄️")
-st.title('Object Detection for Images')
+st.title('Licence Plate Detection for Images')
 st.subheader("""
-This object detection project takes in an image and outputs the image with bounding boxes created around the objects in the image
+This object detection project takes in an image and outputs the image with bounding boxes created around licence plate
 """)
+st.markdown("""
+
+	How it works? 
+
+	- Upload one or multiple images (or use the random test image button)
+	- Click on the 'Go!' button to start the detection
+
+    """
+    )
 
 
 if len(st.session_state.keys()) > 0:
@@ -41,8 +50,8 @@ else:
 col1, col2, col3 = st.columns(3)
 
 with col1:
-	file = st.file_uploader('Upload Images', type = ['jpg','png','jpeg'])
-	if file:
+	file = st.file_uploader('', type = ['jpg','png','jpeg'])
+	if file and file not in st.session_state.FILES_LIST:
 		st.session_state.FILES_LIST.append(file)
 
 with col2:
@@ -60,18 +69,23 @@ if len(st.session_state.FILES_LIST) > 0:
 
 	cols_img = st.columns(len(st.session_state.FILES_LIST))
 	for index, file in enumerate(st.session_state.FILES_LIST):
+
 		img1 = Image.open(file)
 		cols_img[index].image(img1, width=int(600/len(cols_img)), caption = "Uploaded Image")
 		#my_bar = st.progress(0)
 		img1 = np.array(img1.convert('RGB'))
+		
+		st.session_state.FILES_NAMES.append(file.name)
 		st.session_state.UPLOADED_IMAGES_LIST.append(img1)
+
 
 if test_button:
 
 	#Remove images cache
 	st.session_state.FILES_LIST = []
+	st.session_state.FILES_NAMES = []
 	st.session_state.UPLOADED_IMAGES_LIST = []
-	
+
 	cols_img = ["col1"]
 	st.session_state.DEFAULT_IMAGE_URL = random_image()
 	img1 = cv2.imread(st.session_state.DEFAULT_IMAGE_URL)	
@@ -100,7 +114,7 @@ def licence_plate_detection(img):
 
 	#Convert the image to blob
 	height, width = img.shape[:2]
-	blob = cv2.dnn.blobFromImage(img, 1 / 255, st.session_state.IMG_RESOLUTION, (0, 0, 0), swapRB=True, crop=False)   #Mean subtraction + Scaling by some factor
+	blob = cv2.dnn.blobFromImage(img, 1 / 255, st.session_state.COCO_IMG_RESOLUTION, (0, 0, 0), swapRB=True, crop=False)   #Mean subtraction + Scaling by some factor
 	#print("blob :", blob)
 
 	#Foward pass
@@ -117,7 +131,7 @@ def licence_plate_detection(img):
 			confidence = scores[class_id]
 
 			
-			if confidence > st.session_state.CONF_THRESH:
+			if confidence > st.session_state.COCO_CONF_THRESH:
 			  print("confidence :", confidence)
 			  center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
 			  x = int(center_x - w / 2) 
@@ -132,7 +146,7 @@ def licence_plate_detection(img):
 
 
 	# Perform non maximum suppression for the bounding boxes to filter overlapping and low confident bounding boxes
-	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.CONF_THRESH, st.session_state.NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
+	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.COCO_CONF_THRESH, st.session_state.COCO_NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
 	#print(indices)
 
 	# Draw the filtered bounding boxes with their class to the image
@@ -207,7 +221,7 @@ def car_detection(img):
 
 	#Convert the image to blob
 	height, width = img.shape[:2]
-	blob = cv2.dnn.blobFromImage(img, 1 / 255, st.session_state.IMG_RESOLUTION, (0, 0, 0), swapRB=True, crop=False)   #Mean subtraction + Scaling by some factor
+	blob = cv2.dnn.blobFromImage(img, 1 / 255, st.session_state.LP_IMG_RESOLUTION, (0, 0, 0), swapRB=True, crop=False)   #Mean subtraction + Scaling by some factor
 	#print("blob :", blob)
 
 	#Foward pass
@@ -224,7 +238,7 @@ def car_detection(img):
 			confidence = scores[class_id]
 
 			
-			if confidence > st.session_state.CONF_THRESH:
+			if confidence > st.session_state.LP_CONF_THRESH:
 			  print("confidence :", confidence)
 			  center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
 			  x = int(center_x - w / 2) 
@@ -239,7 +253,7 @@ def car_detection(img):
 
 
 	# Perform non maximum suppression for the bounding boxes to filter overlapping and low confident bounding boxes
-	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.CONF_THRESH, st.session_state.NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
+	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.LP_CONF_THRESH, st.session_state.LP_NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
 	#print(indices)
 
 	# Draw the filtered bounding boxes with their class to the image
@@ -287,10 +301,8 @@ button_next = st.button('Go !')
 if st.session_state is not {} and button_next:
 	
 	# Read the image
-	for uploaded_imgage in st.session_state.UPLOADED_IMAGES_LIST:
-		img = uploaded_imgage.copy()
-
-		print(img)
+	for uploaded_image in st.session_state.UPLOADED_IMAGES_LIST:
+		img = uploaded_image.copy()
 
 		#Processing of the image 
 		#gray_img = cv2.cvtColor(st.session_state.uploaded_img, cv2.COLOR_BGR2GRAY)
@@ -306,6 +318,7 @@ if st.session_state is not {} and button_next:
 
 	#Remove images cache
 	st.session_state.FILES_LIST = []
+	st.session_state.FILES_NAMES = []
 	st.session_state.UPLOADED_IMAGES_LIST = []
 
 
