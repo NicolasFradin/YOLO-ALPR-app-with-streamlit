@@ -1,0 +1,1 @@
+# The scraper helps us to get more cars infos and images 
