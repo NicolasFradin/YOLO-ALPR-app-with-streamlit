@@ -5,6 +5,12 @@ import cv2
 st.sidebar.markdown("# About ❄️")
 
 
+#TO DO: 
+# - settings for coco
+# - Github link
+
+
+
 def main():
     new_title = '<p style="font-size: 42px;">Welcome to the Licence Plate Detection App!</p>'
     read_me_0 = st.markdown(new_title, unsafe_allow_html=True)
@@ -21,7 +27,7 @@ def main():
     This YOLO Licence Plate Detection project can detect if the image has a car and then detects the licence plate. 
     
 
-    Some examples frequently found on www.ouicar.fr: 
+    Some examples frequently found on www.ouicar.fr (reload to see more examples): 
 
 
     """

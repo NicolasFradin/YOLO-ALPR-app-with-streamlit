@@ -63,8 +63,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   # 'carsmarketplace.pipelines.CarsmarketplacePipeline': 300,
-   'scrapy.contrib.pipeline.images.FilesPipeline': 1,				#This setting will activate Scrapy’s default file scraping capability.
+    'carsmarketplace.pipelines.CarsmarketplacePipeline': 300,
+#   'scrapy.contrib.pipeline.images.FilesPipeline': 1,				#This setting will activate Scrapy’s default file scraping capability.
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

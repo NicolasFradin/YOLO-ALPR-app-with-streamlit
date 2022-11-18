@@ -5,3 +5,6 @@ requests
 pandas
 pillow 
 scrappy
+user_agent==0.1.10
+pyqt5
+lxml
