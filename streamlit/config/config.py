@@ -12,14 +12,18 @@ def random_image(folder=None):
     
     img_name = random.choice(files)
 
-    if img_name in ['.DS_Store']:
-        os.remove(img_name)
+    if img_name in ['.DS_Store'] or 'DS_Store' in img_name:
+        os.remove(pwd + '/data/samples/' + img_name)
         return random_image(folder)
 
     if folder:
         return pwd + '/data/samples/' + folder + '/' + img_name
     else:
         return pwd + '/data/samples/' + img_name
+
+def delete_sample_image(path):
+    os.remove(path)
+    return True
 
 def init_config():
     

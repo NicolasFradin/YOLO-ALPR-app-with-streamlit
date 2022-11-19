@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
-from config.config import init_config, random_image
+from config.config import init_config, random_image, delete_sample_image
 
 st.sidebar.markdown("# Licence Plate ❄️")
 st.title('Licence Plate Detection for Images')
@@ -114,7 +114,7 @@ def licence_plate_detection(img):
 
 	#Convert the image to blob
 	height, width = img.shape[:2]
-	blob = cv2.dnn.blobFromImage(img, 1 / 255, st.session_state.COCO_IMG_RESOLUTION, (0, 0, 0), swapRB=True, crop=False)   #Mean subtraction + Scaling by some factor
+	blob = cv2.dnn.blobFromImage(img, 1 / 255, st.session_state.LP_IMG_RESOLUTION, (0, 0, 0), swapRB=True, crop=False)   #Mean subtraction + Scaling by some factor
 	#print("blob :", blob)
 
 	#Foward pass
@@ -131,8 +131,8 @@ def licence_plate_detection(img):
 			confidence = scores[class_id]
 
 			
-			if confidence > st.session_state.COCO_CONF_THRESH:
-			  print("confidence :", confidence)
+			if confidence > st.session_state.LP_CONF_THRESH:
+			  # print("confidence :", confidence)
 			  center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
 			  x = int(center_x - w / 2) 
 			  y = int(center_y - h / 2)
@@ -146,7 +146,7 @@ def licence_plate_detection(img):
 
 
 	# Perform non maximum suppression for the bounding boxes to filter overlapping and low confident bounding boxes
-	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.COCO_CONF_THRESH, st.session_state.COCO_NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
+	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.LP_CONF_THRESH, st.session_state.LP_NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
 	#print(indices)
 
 	# Draw the filtered bounding boxes with their class to the image
@@ -162,10 +162,10 @@ def licence_plate_detection(img):
 			(x, y) = (b_boxes[index][0], b_boxes[index][1])
 			(w, h) = (b_boxes[index][2], b_boxes[index][3])
 			
-			print("x :", x)
-			print("y :", y)
-			print("w :", w)
-			print("h :", h)
+			# print("x :", x)
+			# print("y :", y)
+			# print("w :", w)
+			# print("h :", h)
 
 			if x < 0: x=0
 			if y < 0: y=0
@@ -196,6 +196,10 @@ def licence_plate_detection(img):
 		st.image(img_with_blur, width=int(600/len(st.session_state.UPLOADED_IMAGES_LIST)), caption = "LP Blurred")
 
 	else: 
+		
+		delete_sample_image(st.session_state.DEFAULT_IMAGE_URL)
+		print("deleted: ", st.session_state.DEFAULT_IMAGE_URL)
+
 		st.write("NO PLATE DETECTED...")
 		st.write("Try to raise thresholds to detect the plate...")
 
@@ -212,12 +216,12 @@ def car_detection(img):
 
 	# Get the output layer from YOLOv3
 	layers = net.getLayerNames()
-	print(layers)
-	print(net.getUnconnectedOutLayers())
+	# print(layers)
+	# print(net.getUnconnectedOutLayers())
 	#output_layers = [layers[i - 1] for i in net.getUnconnectedOutLayers()]
 	output_layers = [layers[i - 1] for i in net.getUnconnectedOutLayers()]
 
-	print("output_layers :", output_layers)
+	# print("output_layers :", output_layers)
 
 	#Convert the image to blob
 	height, width = img.shape[:2]
@@ -238,8 +242,8 @@ def car_detection(img):
 			confidence = scores[class_id]
 
 			
-			if confidence > st.session_state.LP_CONF_THRESH:
-			  print("confidence :", confidence)
+			if confidence > st.session_state.COCO_CONF_THRESH:
+			  # print("confidence :", confidence)
 			  center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
 			  x = int(center_x - w / 2) 
 			  y = int(center_y - h / 2)
@@ -248,12 +252,12 @@ def car_detection(img):
 			  class_ids.append(int(class_id))
 
 
-	print("b_boxes :", b_boxes)
-	print("confidences :", confidences)
+	# print("b_boxes :", b_boxes)
+	# print("confidences :", confidences)
 
 
 	# Perform non maximum suppression for the bounding boxes to filter overlapping and low confident bounding boxes
-	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.LP_CONF_THRESH, st.session_state.LP_NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
+	indices = cv2.dnn.NMSBoxes(b_boxes, confidences, st.session_state.COCO_CONF_THRESH, st.session_state.COCO_NMS_THRESH) #.flatten().tolist()     #non-maximum suppression given boxes and corresponding scores
 	#print(indices)
 
 	# Draw the filtered bounding boxes with their class to the image
@@ -269,10 +273,10 @@ def car_detection(img):
 			(x, y) = (b_boxes[index][0], b_boxes[index][1])
 			(w, h) = (b_boxes[index][2], b_boxes[index][3])
 			
-			print("x :", x)
-			print("y :", y)
-			print("w :", w)
-			print("h :", h)
+			# print("x :", x)
+			# print("y :", y)
+			# print("w :", w)
+			# print("h :", h)
 
 			if x < 0: x=0
 			if y < 0: y=0
